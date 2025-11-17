@@ -22,6 +22,13 @@ static SDL_Texture *column_texture = NULL;
 #define PIXELS_PER_SECOND 60
 #define BIRD_LEFT_MARGIN 120
 #define BIRD_WIDTH 80
+#define BIRD_HEIGHT 30
+#define COLUMN_WIDTH 60
+#define HOLE_HEIGHT 60
+#define MENURECT_LEFT_MARGIN 160
+#define MENURECT_WIDTH 320
+#define MENURECT_HEIGHT 60
+
 
 static Uint64 last_time = 0;
 static float rect_speed = 120;
@@ -114,16 +121,6 @@ static SDL_AppResult handle_key_event_(SDL_Scancode key_code)
     {
     case SDL_SCANCODE_ESCAPE:
         pause = !pause;
-
-        /*треба перемістити створення ректів у АппІтерейт
-        for (int i = 0; i < 3; i++) {
-            rect.x = 220;
-            rect.y = 80 + 80 * i;
-            rect.w = 200;
-            rect.h = 40;
-            SDL_RenderFillRect(renderer, &rect);
-        }
-        SDL_RenderPresent(renderer);*/
         break;
     case SDL_SCANCODE_Q:
         return SDL_APP_SUCCESS;
@@ -156,29 +153,22 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    SDL_FRect rect;
-    SDL_FRect rect1;
-    SDL_FRect rect2;
-    SDL_FRect rect3;
-    SDL_FRect rect4;
+    SDL_FRect background;
+    SDL_FRect column1;
+    SDL_FRect column2;
+    SDL_FRect birdRect;
     const Uint64 now = SDL_GetTicks();
-    int i;
-
-    const float direction = ((now % 2000) >= 1000) ? 1.0f : -1.0f;
-    const float scale = ((float)(((int)(now % 1000)) - 500) / 500.0f) * direction;
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
 
     const float elapsed = ((float)(now - last_time)) / 1000.0f;
 
-    rect.x = 0;
-    rect.y = 0;
-    rect.w = WINDOW_WIDTH;
-    rect.h = WINDOW_HEIGHT;
-    SDL_RenderTexture(renderer, background_texture, NULL, &rect);
-
-    // ці 3 рядка роблять рухи на екрані => без них там "пауза"
+    background.x = 0;
+    background.y = 0;
+    background.w = WINDOW_WIDTH;
+    background.h = WINDOW_HEIGHT;
+    SDL_RenderTexture(renderer, background_texture, NULL, &background);
 
     if (!pause)
     {
@@ -187,65 +177,64 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         birdLimit();
     }
 
-    rect1.x = column * WINDOW_WIDTH;
-    rect1.y = 0;
-    rect1.w = 60;
-    rect1.h = rect_hole * WINDOW_HEIGHT;
-    SDL_RenderTexture(renderer, column_texture, NULL, &rect1);
+    column1.x = column * WINDOW_WIDTH;
+    column1.y = 0;
+    column1.w = COLUMN_WIDTH;
+    column1.h = rect_hole * WINDOW_HEIGHT;
+    SDL_RenderTexture(renderer, column_texture, NULL, &column1);
 
-    rect2.x = column * WINDOW_WIDTH;
-    rect2.y = rect_hole * WINDOW_HEIGHT + 120;
-    rect2.w = 60;
-    rect2.h = WINDOW_HEIGHT - rect_hole * WINDOW_HEIGHT;
-    SDL_RenderTexture(renderer, column_texture, NULL, &rect2);
-    if (rect2.x <= -60)
+    column2.x = column * WINDOW_WIDTH;
+    column2.y = rect_hole * WINDOW_HEIGHT + 120;
+    column2.w = COLUMN_WIDTH;
+    column2.h = WINDOW_HEIGHT - rect_hole * WINDOW_HEIGHT;
+    SDL_RenderTexture(renderer, column_texture, NULL, &column2);
+    if (column2.x <= -60)
     {
         column = 1;
         rect_hole = SDL_randf();
     }
 
-    rect3.x = BIRD_LEFT_MARGIN;
-    rect3.y = bird * WINDOW_HEIGHT;
-    rect3.w = BIRD_WIDTH; 
-    rect3.h = 30; // todo: change 30 to a constant like WINDOW_HEIGHT
+    birdRect.x = BIRD_LEFT_MARGIN;
+    birdRect.y = bird * WINDOW_HEIGHT;
+    birdRect.w = BIRD_WIDTH;
+    birdRect.h = BIRD_HEIGHT;
 
-    if (rect3.y < 0)
+    if (birdRect.y < 0)
     {
-        rect3.y = 0;
+        birdRect.y = 0;
     }
-    if (rect3.x + BIRD_WIDTH <= rect2.x + 60 && rect3.x + BIRD_WIDTH >= rect2.x || rect3.x <= rect2.x + 60 && rect3.x >= rect2.x)
+    if (birdRect.x + BIRD_WIDTH <= column2.x + COLUMN_WIDTH && birdRect.x + BIRD_WIDTH >= column2.x || birdRect.x <= column2.x + COLUMN_WIDTH && birdRect.x >= column2.x)
     {
-        if (rect3.y + 20 < rect_hole * WINDOW_HEIGHT + 110 && rect3.y > rect_hole * WINDOW_HEIGHT)
+        if (birdRect.y + BIRD_HEIGHT < rect_hole * WINDOW_HEIGHT + 120 && birdRect.y > rect_hole * WINDOW_HEIGHT)
         {
             game_over = 0;
         }
-        else if (rect3.x + BIRD_WIDTH <= rect2.x + 60 && rect3.x + BIRD_WIDTH >= rect2.x || rect3.x <= rect2.x + 60 && rect3.x >= rect2.x)
+        else if (birdRect.x + BIRD_WIDTH <= column2.x + COLUMN_WIDTH && birdRect.x + BIRD_WIDTH >= column2.x || birdRect.x <= column2.x + COLUMN_WIDTH && birdRect.x >= column2.x)
         {
-            if (rect3.y + 20 >= rect2.y + 60 || rect3.y <= rect2.y)
+            if (birdRect.y + BIRD_HEIGHT >= column2.y + HOLE_HEIGHT || birdRect.y <= column2.y)
             {
                 game_over = 1;
             }
         }
-    } 
+    }
 
-    SDL_RenderTexture(renderer, bird_texture, NULL, &rect3);
+    SDL_RenderTexture(renderer, bird_texture, NULL, &birdRect);
 
     if (pause)
-{
-    SDL_SetRenderDrawColor(renderer, 255, 130, 0, SDL_ALPHA_OPAQUE);
-    SDL_FRect rect;
-    for (int i = 0; i < 3; i++) {
-        rect.x = 160;
-        rect.y = 90 + 90 * i;
-        rect.w = 320;
-        rect.h = 60;
-        SDL_RenderFillRect(renderer, &rect);
+    {
+        SDL_SetRenderDrawColor(renderer, 255, 130, 0, SDL_ALPHA_OPAQUE);
+        SDL_FRect menuRect;
+        for (int i = 0; i < 3; i++)
+        {
+            menuRect.x = MENURECT_LEFT_MARGIN;
+            menuRect.y = 90 + 90 * i;
+            menuRect.w = MENURECT_WIDTH;
+            menuRect.h = MENURECT_HEIGHT;
+            SDL_RenderFillRect(renderer, &menuRect);
+        }
     }
-}
 
     last_time = now;
-
-    
 
     SDL_RenderPresent(renderer);
     if (game_over == 0)
