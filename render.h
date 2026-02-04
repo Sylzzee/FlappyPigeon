@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_surface.h>
+#include "game_math.h"
 
 static SDL_Window *window = NULL;
 static SDL_Renderer *renderer = NULL;
@@ -10,9 +11,12 @@ static char column_path[] = "column.bmp";
 static SDL_Texture *background_texture = NULL;
 static SDL_Texture *bird_texture = NULL;
 static SDL_Texture *column_texture = NULL;
+static Uint64 last_time = 0;
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
+#define MENURECT_LEFT_MARGIN 160
+#define MENURECT_WIDTH 320
+#define MENURECT_HEIGHT 60
+#define TEXT_SIZE 20
 
 SDL_AppResult Game_Init()
 {
@@ -72,4 +76,107 @@ SDL_AppResult Game_Init()
     SDL_DestroySurface(surface);
 
     return SDL_APP_CONTINUE;
+}
+
+void drawBackground()
+{
+    SDL_FRect background;
+    background.x = 0;
+    background.y = 0;
+    background.w = WINDOW_WIDTH;
+    background.h = WINDOW_HEIGHT;
+    SDL_RenderTexture(renderer, background_texture, NULL, &background);
+}
+
+void drawColumn()
+{
+    SDL_FRect column1;
+    column1.x = getColumnX();
+    column1.y = 0;
+    column1.w = COLUMN_WIDTH;
+    column1.h = getHoleTopY();
+    SDL_RenderTexture(renderer, column_texture, NULL, &column1);
+
+    SDL_FRect column2;
+    column2.x = getColumnX();
+    column2.y = getHoleBottomY();
+    column2.w = COLUMN_WIDTH;
+    column2.h = WINDOW_HEIGHT - getHoleBottomY();
+    SDL_RenderTexture(renderer, column_texture, NULL, &column2);
+}
+
+void drawBird()
+{
+    SDL_FRect birdRect;
+    birdRect.x = BIRD_LEFT_MARGIN;
+    birdRect.y = getBirdY();
+    birdRect.w = BIRD_WIDTH;
+    birdRect.h = BIRD_HEIGHT;
+    SDL_RenderTexture(renderer, bird_texture, NULL, &birdRect);
+}
+
+void drawMenuRects()
+{
+    SDL_SetRenderDrawColor(renderer, 255, 130, 0, SDL_ALPHA_OPAQUE);
+    SDL_FRect menuRect;
+    for (int i = 0; i < 3; i++)
+    {
+        menuRect.x = MENURECT_LEFT_MARGIN;
+        menuRect.y = 90 + 90 * i;
+        menuRect.w = MENURECT_WIDTH;
+        menuRect.h = MENURECT_HEIGHT;
+        SDL_RenderFillRect(renderer, &menuRect);
+    }
+}
+
+void drawScore()
+{
+    char drawscore[100];
+    SDL_SetRenderDrawColor(renderer, 180, 0, 255, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderScale(renderer, 5.0f, 5.0f);
+    snprintf(drawscore, 100, "%d", addscore);
+    SDL_RenderDebugText(renderer, 60.6f, 2, drawscore);
+    SDL_SetRenderScale(renderer, 1.0f, 1.0f);
+}
+
+void writeMenuText(const Uint64 now)
+{
+    char score[100];
+    SDL_SetRenderScale(renderer, 3.5f, 3.5f);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_RenderDebugText(renderer, 60, 31, "Continue");
+    SDL_RenderDebugText(renderer, 60, 57, "Settings");
+    SDL_RenderDebugText(renderer, 76, 82, "Exit");
+    SDL_SetRenderScale(renderer, 1.0f, 1.0f);
+}
+
+void gameRender() {
+    const Uint64 now = SDL_GetTicks();
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(renderer);
+
+    const float elapsed = ((float)(now - last_time)) / 1000.0f;
+
+    drawBackground();
+
+    updateColumn(elapsed);
+    drawColumn();
+
+    birdFall(elapsed);
+    drawBird();
+
+    checkGameOver();
+
+    if (pause)
+    {
+        drawMenuRects();
+        writeMenuText(now);
+    }
+
+    drawScore();
+
+    last_time = now;
+
+    SDL_RenderPresent(renderer);
 }
