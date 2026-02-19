@@ -158,10 +158,27 @@ bool isGameNotOver()
     return game_over == 0;
 }
 
-void scancodeR()
+void restart()
 {
     pause = 0;
     addscore = 0;
     bird = 0.5;
     column = 1;
+}
+
+SDL_AppResult processMenu()
+{
+    if (rect_focus == 1 && pause)
+    {
+        pause = !pause;
+    }
+    else if (rect_focus == 2)
+    {
+        restart();
+    }
+    else if (rect_focus == 3)
+    {
+        return SDL_APP_SUCCESS;
+    }
+    return SDL_APP_CONTINUE;
 }

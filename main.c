@@ -25,8 +25,8 @@ static SDL_AppResult handle_key_event_(SDL_Scancode key_code)
         break;
     case SDL_SCANCODE_Q:
         return SDL_APP_SUCCESS;
-    case SDL_SCANCODE_R:
-        scancodeR();
+    case SDL_SCANCODE_SPACE:
+        return processMenu();
         break;
     case SDL_SCANCODE_UP:
         if(!pause) {

@@ -169,7 +169,7 @@ void drawMenuText(const Uint64 now)
     SDL_SetRenderScale(renderer, 3.5f, 3.5f);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderDebugText(renderer, 60, 31, "Continue");
-    SDL_RenderDebugText(renderer, 60, 57, "Settings");
+    SDL_RenderDebugText(renderer, 64, 57, "Restart");
     SDL_RenderDebugText(renderer, 76, 82, "Exit");
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
@@ -184,7 +184,7 @@ void processColumn(const float elapsed) {
     drawColumn();
 }
 
-void processMenu(const Uint64 now) {
+void drawMenu(const Uint64 now) {
     if (pause)
     {
         drawRectFocus(rect_focus);
@@ -204,7 +204,7 @@ void gameRender() {
 
     processColumn(elapsed);
 
-    processMenu(now);
+    drawMenu(now);
 
     checkGameOver();
 
