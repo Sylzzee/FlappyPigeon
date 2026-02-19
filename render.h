@@ -115,6 +115,30 @@ void drawBird()
     SDL_RenderTexture(renderer, bird_texture, NULL, &birdRect);
 }
 
+void drawRectFocus(int i) {
+    SDL_SetRenderDrawColor(renderer, 255, 60, 60, SDL_ALPHA_OPAQUE);
+    SDL_FRect menuRectChooseUp;
+    //for (i; i > -1; i--) {
+        menuRectChooseUp.x = MENURECT_LEFT_MARGIN - 5;
+        menuRectChooseUp.y = 90 * i - 5;
+        menuRectChooseUp.w = MENURECT_WIDTH + 10;
+        menuRectChooseUp.h = MENURECT_HEIGHT + 10;
+        SDL_RenderFillRect(renderer, &menuRectChooseUp);
+    //}
+}
+
+void RectChooseDown(int i) {
+    SDL_SetRenderDrawColor(renderer, 255, 60, 60, SDL_ALPHA_OPAQUE);
+    SDL_FRect menuRectChooseDown;
+    //for (i; i < 3; i++) {
+        menuRectChooseDown.x = MENURECT_LEFT_MARGIN - 5;
+        menuRectChooseDown.y = 90 * i - 5;
+        menuRectChooseDown.w = MENURECT_WIDTH + 10;
+        menuRectChooseDown.h = MENURECT_HEIGHT + 10;
+        SDL_RenderFillRect(renderer, &menuRectChooseDown);
+    //}
+}
+
 void drawMenuRects()
 {
     SDL_SetRenderDrawColor(renderer, 255, 130, 0, SDL_ALPHA_OPAQUE);
@@ -139,7 +163,7 @@ void drawScore()
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
 
-void writeMenuText(const Uint64 now)
+void drawMenuText(const Uint64 now)
 {
     char score[100];
     SDL_SetRenderScale(renderer, 3.5f, 3.5f);
@@ -150,29 +174,39 @@ void writeMenuText(const Uint64 now)
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
 
+void processBird(const float elapsed) {
+    birdFall(elapsed);
+    drawBird();
+}
+
+void processColumn(const float elapsed) {
+    updateColumn(elapsed);
+    drawColumn();
+}
+
+void processMenu(const Uint64 now) {
+    if (pause)
+    {
+        drawRectFocus(rect_focus);
+        drawMenuRects();
+        drawMenuText(now);
+    }
+}
+
 void gameRender() {
     const Uint64 now = SDL_GetTicks();
-
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(renderer);
 
     const float elapsed = ((float)(now - last_time)) / 1000.0f;
 
     drawBackground();
 
-    updateColumn(elapsed);
-    drawColumn();
+    processBird(elapsed);
 
-    birdFall(elapsed);
-    drawBird();
+    processColumn(elapsed);
+
+    processMenu(now);
 
     checkGameOver();
-
-    if (pause)
-    {
-        drawMenuRects();
-        writeMenuText(now);
-    }
 
     drawScore();
 

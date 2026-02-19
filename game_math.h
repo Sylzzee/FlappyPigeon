@@ -9,6 +9,8 @@ static float pause = 0;
 static bool flag = 1;
 static float column_speed = 0.18f;
 
+int rect_focus = 1;
+
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 #define COLUMN_WIDTH 60
@@ -97,17 +99,38 @@ bool isBirdInsideHole()
     return top && bottom;
 }
 
-void birdUp() {
+void rectFocusUp()
+{
+    rect_focus--;
+    if (rect_focus < 1)
+    {
+        rect_focus = 3;
+    }
+}
+
+void rectFocusDown()
+{
+    rect_focus++;
+    if (rect_focus > 3)
+    {
+        rect_focus = 1;
+    }
+}
+
+void birdUp()
+{
     bird -= 0.1f;
     birdLimit();
 }
 
-void birdDown() {
+void birdDown()
+{
     bird += 0.1f;
     birdLimit();
 }
 
-void birdFall(const float elapsed) {
+void birdFall(const float elapsed)
+{
     if (!pause)
     {
         bird += 0.1f * elapsed;
@@ -115,7 +138,8 @@ void birdFall(const float elapsed) {
     }
 }
 
-void checkGameOver() {
+void checkGameOver()
+{
     if (isBirdOvercomeColumn())
     {
         if (isBirdInsideHole())
@@ -129,6 +153,15 @@ void checkGameOver() {
     }
 }
 
-bool isGameNotOver() {
+bool isGameNotOver()
+{
     return game_over == 0;
+}
+
+void scancodeR()
+{
+    pause = 0;
+    addscore = 0;
+    bird = 0.5;
+    column = 1;
 }

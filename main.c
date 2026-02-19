@@ -21,14 +21,28 @@ static SDL_AppResult handle_key_event_(SDL_Scancode key_code)
     {
     case SDL_SCANCODE_ESCAPE:
         pause = !pause;
+        rect_focus = 1;
         break;
     case SDL_SCANCODE_Q:
         return SDL_APP_SUCCESS;
+    case SDL_SCANCODE_R:
+        scancodeR();
+        break;
     case SDL_SCANCODE_UP:
-        birdUp();
+        if(!pause) {
+            birdUp();
+        }
+        else {
+            rectFocusUp();
+        }
         break;
     case SDL_SCANCODE_DOWN:
-        birdDown();
+        if(!pause) {
+            birdDown();
+        }
+        else {
+            rectFocusDown();
+        }
         break;
     default:
         break;
