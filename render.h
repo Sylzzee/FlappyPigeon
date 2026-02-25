@@ -115,6 +115,16 @@ void drawBird()
     SDL_RenderTexture(renderer, bird_texture, NULL, &birdRect);
 }
 
+void drawRectFocus(int rect_focus) {
+    SDL_SetRenderDrawColor(renderer, 255, 60, 60, SDL_ALPHA_OPAQUE);
+    SDL_FRect menuRectChooseUp;
+    menuRectChooseUp.x = MENURECT_LEFT_MARGIN - 5;
+    menuRectChooseUp.y = 90.0f * rect_focus - 5;
+    menuRectChooseUp.w = MENURECT_WIDTH + 10;
+    menuRectChooseUp.h = MENURECT_HEIGHT + 10;
+    SDL_RenderFillRect(renderer, &menuRectChooseUp);
+}
+
 void drawMenuRects()
 {
     SDL_SetRenderDrawColor(renderer, 255, 130, 0, SDL_ALPHA_OPAQUE);
@@ -122,7 +132,7 @@ void drawMenuRects()
     for (int i = 0; i < 3; i++)
     {
         menuRect.x = MENURECT_LEFT_MARGIN;
-        menuRect.y = 90 + 90 * i;
+        menuRect.y = 90.0f + 90 * i;
         menuRect.w = MENURECT_WIDTH;
         menuRect.h = MENURECT_HEIGHT;
         SDL_RenderFillRect(renderer, &menuRect);

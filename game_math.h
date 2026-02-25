@@ -21,11 +21,19 @@ int rect_focus = 1;
 #define BIRD_RIGHT_X (BIRD_LEFT_MARGIN + BIRD_WIDTH)
 #define PIXELS_PER_SECOND 60
 
+void restart()
+{
+    pause = 0;
+    addscore = 0;
+    bird = 0.5;
+    column = 1;
+}
+
 void birdLimit()
 {
     if (bird > 1)
     {
-        game_over = 1;
+        restart();
     }
     else if (bird < 0)
     {
@@ -148,7 +156,7 @@ void checkGameOver()
         }
         else
         {
-            game_over = 1;
+            restart();
         }
     }
 }
@@ -158,27 +166,21 @@ bool isGameNotOver()
     return game_over == 0;
 }
 
-void restart()
-{
-    pause = 0;
-    addscore = 0;
-    bird = 0.5;
-    column = 1;
-}
-
 SDL_AppResult processMenu()
 {
-    if (rect_focus == 1 && pause)
+    switch (rect_focus)
     {
+    case 1:
         pause = !pause;
-    }
-    else if (rect_focus == 2)
-    {
+        break;
+    case 2:
         restart();
-    }
-    else if (rect_focus == 3)
-    {
+        break;
+    case 3:
         return SDL_APP_SUCCESS;
+        break;
+    default:
+        break;
     }
     return SDL_APP_CONTINUE;
 }
