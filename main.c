@@ -66,14 +66,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
     gameRender();
-    if (isGameNotOver())
-    {
-        return SDL_APP_CONTINUE;
-    }
-    else
-    {
-        return SDL_APP_SUCCESS;
-    }
+    return SDL_APP_CONTINUE;
 }
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)

@@ -149,6 +149,16 @@ void drawScore()
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
 
+void drawGameOverScore()
+{
+    char drawgameoverscore[100];
+    SDL_SetRenderDrawColor(renderer, 180, 0, 255, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderScale(renderer, 6.0f, 6.0f);
+    snprintf(drawgameoverscore, 100, "%d", addscore);
+    SDL_RenderDebugText(renderer, 60.6f, 2, drawgameoverscore);
+    SDL_SetRenderScale(renderer, 1.0f, 1.0f);
+}
+
 void drawMenuText(const Uint64 now)
 {
     char score[100];
@@ -177,6 +187,9 @@ void drawMenu(const Uint64 now) {
         drawMenuRects();
         drawMenuText(now);
     }
+    // else if(game_over != 0) {
+    //     drawGameOverScore();
+    // }
 }
 
 void gameRender() {

@@ -2,11 +2,10 @@
 
 static float column = 1;
 static float bird = 0.5;
-static int game_over = 0;
 static float rect_hole = 0.5;
 int addscore = 0;
-static float pause = 0;
-static bool flag = 1;
+static bool pause = false;
+static bool flag = true;
 static float column_speed = 0.18f;
 
 int rect_focus = 1;
@@ -148,22 +147,10 @@ void birdFall(const float elapsed)
 
 void checkGameOver()
 {
-    if (isBirdOvercomeColumn())
+    if (isBirdOvercomeColumn() && !isBirdInsideHole())
     {
-        if (isBirdInsideHole())
-        {
-            game_over = 0;
-        }
-        else
-        {
-            restart();
-        }
+        restart();
     }
-}
-
-bool isGameNotOver()
-{
-    return game_over == 0;
 }
 
 SDL_AppResult processMenu()
