@@ -115,7 +115,8 @@ void drawBird()
     SDL_RenderTexture(renderer, bird_texture, NULL, &birdRect);
 }
 
-void drawRectFocus(int rect_focus) {
+void drawRectFocus(int rect_focus)
+{
     SDL_SetRenderDrawColor(renderer, 255, 60, 60, SDL_ALPHA_OPAQUE);
     SDL_FRect menuRectChooseUp;
     menuRectChooseUp.x = MENURECT_LEFT_MARGIN - 5;
@@ -125,11 +126,36 @@ void drawRectFocus(int rect_focus) {
     SDL_RenderFillRect(renderer, &menuRectChooseUp);
 }
 
+void drawGameOverRectFocus(int game_over_rect_focus)
+{
+    SDL_SetRenderDrawColor(renderer, 255, 60, 60, SDL_ALPHA_OPAQUE);
+    SDL_FRect menuRectChoose;
+    menuRectChoose.x = MENURECT_LEFT_MARGIN - 5;
+    menuRectChoose.y = 90.0f * (game_over_rect_focus + 1) - 5;
+    menuRectChoose.w = MENURECT_WIDTH + 10;
+    menuRectChoose.h = MENURECT_HEIGHT + 10;
+    SDL_RenderFillRect(renderer, &menuRectChoose);
+}
+
 void drawMenuRects()
 {
     SDL_SetRenderDrawColor(renderer, 255, 130, 0, SDL_ALPHA_OPAQUE);
     SDL_FRect menuRect;
     for (int i = 0; i < 3; i++)
+    {
+        menuRect.x = MENURECT_LEFT_MARGIN;
+        menuRect.y = 90.0f + 90 * i;
+        menuRect.w = MENURECT_WIDTH;
+        menuRect.h = MENURECT_HEIGHT;
+        SDL_RenderFillRect(renderer, &menuRect);
+    }
+}
+
+void drawGameOverMenuRects()
+{
+    SDL_SetRenderDrawColor(renderer, 255, 130, 0, SDL_ALPHA_OPAQUE);
+    SDL_FRect menuRect;
+    for (int i = 1; i < 3; i++)
     {
         menuRect.x = MENURECT_LEFT_MARGIN;
         menuRect.y = 90.0f + 90 * i;
@@ -149,16 +175,6 @@ void drawScore()
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
 
-void drawGameOverScore()
-{
-    char drawgameoverscore[100];
-    SDL_SetRenderDrawColor(renderer, 180, 0, 255, SDL_ALPHA_OPAQUE);
-    SDL_SetRenderScale(renderer, 6.0f, 6.0f);
-    snprintf(drawgameoverscore, 100, "%d", addscore);
-    SDL_RenderDebugText(renderer, 60.6f, 2, drawgameoverscore);
-    SDL_SetRenderScale(renderer, 1.0f, 1.0f);
-}
-
 void drawMenuText(const Uint64 now)
 {
     char score[100];
@@ -170,29 +186,51 @@ void drawMenuText(const Uint64 now)
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
 
-void processBird(const float elapsed) {
+void drawGameOverMenuText(const Uint64 now)
+{
+    char score[100];
+    SDL_SetRenderScale(renderer, 3.5f, 3.5f);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_RenderDebugText(renderer, 60, 31, "Game Over");
+    SDL_RenderDebugText(renderer, 64, 57, "Restart");
+    SDL_RenderDebugText(renderer, 76, 82, "Exit");
+    SDL_SetRenderScale(renderer, 1.0f, 1.0f);
+}
+
+void processBird(const float elapsed)
+{
     birdFall(elapsed);
     drawBird();
 }
 
-void processColumn(const float elapsed) {
+void processColumn(const float elapsed)
+{
     updateColumn(elapsed);
     drawColumn();
 }
 
-void drawMenu(const Uint64 now) {
-    if (pause)
+void drawMenu(const Uint64 now)
+{
+    if (pause && game_over == false)
     {
-        drawRectFocus(rect_focus);
+        drawRectFocus(menu_focus);
         drawMenuRects();
         drawMenuText(now);
     }
-    // else if(game_over != 0) {
-    //     drawGameOverScore();
-    // }
 }
 
-void gameRender() {
+void drawGameOverMenu(const Uint64 now)
+{
+    if (game_over)
+    {
+        drawGameOverRectFocus(game_over_focus);
+        drawGameOverMenuRects();
+        drawGameOverMenuText(now);
+    }
+}
+
+void gameRender()
+{
     const Uint64 now = SDL_GetTicks();
 
     const float elapsed = ((float)(now - last_time)) / 1000.0f;
@@ -205,8 +243,13 @@ void gameRender() {
 
     drawMenu(now);
 
-    checkGameOver();
+    drawGameOverMenu(now);
 
+    if (game_over == false)
+    {
+        checkGameOver();
+    }
+    
     drawScore();
 
     last_time = now;

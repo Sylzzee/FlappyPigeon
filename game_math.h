@@ -5,10 +5,12 @@ static float bird = 0.5;
 static float rect_hole = 0.5;
 int addscore = 0;
 static bool pause = false;
+static bool game_over = false;
 static bool flag = true;
 static float column_speed = 0.18f;
 
-int rect_focus = 1;
+int menu_focus = 1;
+int game_over_focus = 1;
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -22,17 +24,25 @@ int rect_focus = 1;
 
 void restart()
 {
-    pause = 0;
+    pause = false;
     addscore = 0;
     bird = 0.5;
     column = 1;
+    game_over = false;
+}
+
+void gameOverPause()
+{
+    pause = true;
+    game_over = true;
+    game_over_focus = 1;
 }
 
 void birdLimit()
 {
     if (bird > 1)
     {
-        restart();
+        gameOverPause();
     }
     else if (bird < 0)
     {
@@ -108,19 +118,37 @@ bool isBirdInsideHole()
 
 void rectFocusUp()
 {
-    rect_focus--;
-    if (rect_focus < 1)
+    menu_focus--;
+    if (menu_focus < 1)
     {
-        rect_focus = 3;
+        menu_focus = 3;
     }
 }
 
 void rectFocusDown()
 {
-    rect_focus++;
-    if (rect_focus > 3)
+    menu_focus++;
+    if (menu_focus > 3)
     {
-        rect_focus = 1;
+        menu_focus = 1;
+    }
+}
+
+void gameOverRectFocusUp()
+{
+    game_over_focus--;
+    if (game_over_focus < 1)
+    {
+        game_over_focus = 2;
+    }
+}
+
+void gameOverRectFocusDown()
+{
+    game_over_focus++;
+    if (game_over_focus > 2)
+    {
+        game_over_focus = 1;
     }
 }
 
@@ -149,25 +177,47 @@ void checkGameOver()
 {
     if (isBirdOvercomeColumn() && !isBirdInsideHole())
     {
-        restart();
+        gameOverPause();
     }
+}
+
+SDL_AppResult processGameOverMenu()
+{
+    if (game_over)
+    {
+        switch (game_over_focus)
+        {
+        case 1:
+            restart();
+            break;
+        case 2:
+            return SDL_APP_SUCCESS;
+            break;
+        default:
+            break;
+        }
+    }
+    return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult processMenu()
 {
-    switch (rect_focus)
+    if (pause)
     {
-    case 1:
-        pause = !pause;
-        break;
-    case 2:
-        restart();
-        break;
-    case 3:
-        return SDL_APP_SUCCESS;
-        break;
-    default:
-        break;
+        switch (menu_focus)
+        {
+        case 1:
+            pause = false;
+            break;
+        case 2:
+            restart();
+            break;
+        case 3:
+            return SDL_APP_SUCCESS;
+            break;
+        default:
+            break;
+        }
     }
     return SDL_APP_CONTINUE;
 }

@@ -21,27 +21,49 @@ static SDL_AppResult handle_key_event_(SDL_Scancode key_code)
     {
     case SDL_SCANCODE_ESCAPE:
         pause = !pause;
-        rect_focus = 1;
+        menu_focus = 1;
         break;
     case SDL_SCANCODE_Q:
         return SDL_APP_SUCCESS;
     case SDL_SCANCODE_SPACE:
-        return processMenu();
-        break;
-    case SDL_SCANCODE_UP:
-        if(!pause) {
-            birdUp();
+        if (pause && game_over == false)
+        {
+            return processMenu();
         }
-        else {
+        else if (game_over)
+        {
+            return processGameOverMenu();
+        }
+        else
+        {
+            return SDL_APP_CONTINUE;
+        }
+    case SDL_SCANCODE_UP:
+        if (pause && game_over == false)
+        {
             rectFocusUp();
+        }
+        else if (game_over)
+        {
+            gameOverRectFocusUp();
+        }
+        else
+        {
+            birdUp();
         }
         break;
     case SDL_SCANCODE_DOWN:
-        if(!pause) {
-            birdDown();
-        }
-        else {
+        if (pause && game_over == false)
+        {
             rectFocusDown();
+        }
+        else if (game_over)
+        {
+            gameOverRectFocusDown();
+        }
+        else
+        {
+            birdDown();
         }
         break;
     default:
