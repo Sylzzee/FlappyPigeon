@@ -1,6 +1,8 @@
 #define SDL_MAIN_USE_CALLBACKS 1
 #include <stdio.h>
+#include <SDL3/SDL_main.h>
 #include "render.h"
+#include "game_math.h"
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -20,17 +22,16 @@ static SDL_AppResult handle_key_event_(SDL_Scancode key_code)
     switch (key_code)
     {
     case SDL_SCANCODE_ESCAPE:
-        pause = !pause;
-        menu_focus = 1;
+        switchPause();
         break;
     case SDL_SCANCODE_Q:
         return SDL_APP_SUCCESS;
     case SDL_SCANCODE_SPACE:
-        if (pause && game_over == false)
+        if (isPauseTrue() && isGameOverTrue() == false)
         {
             return processMenu();
         }
-        else if (game_over)
+        else if (isGameOverTrue())
         {
             return processGameOverMenu();
         }
@@ -39,11 +40,11 @@ static SDL_AppResult handle_key_event_(SDL_Scancode key_code)
             return SDL_APP_CONTINUE;
         }
     case SDL_SCANCODE_UP:
-        if (pause && game_over == false)
+        if (isPauseTrue() && isGameOverTrue() == false)
         {
             rectFocusUp();
         }
-        else if (game_over)
+        else if (isGameOverTrue())
         {
             gameOverRectFocusUp();
         }
@@ -53,11 +54,11 @@ static SDL_AppResult handle_key_event_(SDL_Scancode key_code)
         }
         break;
     case SDL_SCANCODE_DOWN:
-        if (pause && game_over == false)
+        if (isPauseTrue() && isGameOverTrue() == false)
         {
             rectFocusDown();
         }
-        else if (game_over)
+        else if (isGameOverTrue())
         {
             gameOverRectFocusDown();
         }

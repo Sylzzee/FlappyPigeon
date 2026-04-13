@@ -1,16 +1,8 @@
+#ifndef GAME_MATH_H
+#define GAME_MATH_H
+
 #include <stdbool.h>
-
-static float column = 1;
-static float bird = 0.5;
-static float rect_hole = 0.5;
-int addscore = 0;
-static bool pause = false;
-static bool game_over = false;
-static bool flag = true;
-static float column_speed = 0.18f;
-
-int menu_focus = 1;
-int game_over_focus = 1;
+#include <SDL3/SDL_init.h>
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -22,202 +14,60 @@ int game_over_focus = 1;
 #define BIRD_RIGHT_X (BIRD_LEFT_MARGIN + BIRD_WIDTH)
 #define PIXELS_PER_SECOND 60
 
-void restart()
-{
-    pause = false;
-    addscore = 0;
-    bird = 0.5;
-    column = 1;
-    game_over = false;
-}
+void switchPause();
 
-void gameOverPause()
-{
-    pause = true;
-    game_over = true;
-    game_over_focus = 1;
-}
+bool isPauseTrue();
 
-void birdLimit()
-{
-    if (bird > 1)
-    {
-        gameOverPause();
-    }
-    else if (bird < 0)
-    {
-        bird = 0;
-    }
-}
+bool isGameOverTrue();
 
-float getColumnX()
-{
-    return column * WINDOW_WIDTH;
-}
+int getMenuFocus();
 
-float getHoleTopY()
-{
-    return rect_hole * WINDOW_HEIGHT;
-}
+int getGameOverMenuFocus();
 
-float getHoleBottomY()
-{
-    return getHoleTopY() + HOLE_HEIGHT * 2;
-}
+int getAddscore();
 
-float getBirdY()
-{
-    return bird * WINDOW_HEIGHT;
-}
+void restart();
 
-float getColumnRightX()
-{
-    return getColumnX() + COLUMN_WIDTH;
-}
+void gameOverPause();
 
-float getBirdBottomY()
-{
-    return getBirdY() + BIRD_HEIGHT;
-}
+void birdLimit();
 
-void updateColumn(const float elapsed)
-{
-    if (!pause)
-    {
-        column -= column_speed * elapsed;
-        if (getColumnRightX() < BIRD_LEFT_MARGIN)
-        {
-            if (flag == 1)
-            {
-                addscore++;
-                flag = 0;
-            }
-        }
-    }
+float getColumnX();
 
-    if (column <= -COLUMN_WIDTH / WINDOW_WIDTH)
-    {
-        column = 1;
-        flag = 1;
-        rect_hole = SDL_randf() * ((float)(WINDOW_HEIGHT - HOLE_HEIGHT) / WINDOW_HEIGHT);
-    }
-}
+float getHoleTopY();
 
-bool isBirdOvercomeColumn()
-{
-    return BIRD_RIGHT_X <= getColumnRightX() && BIRD_RIGHT_X >= getColumnX() ||
-           BIRD_LEFT_MARGIN <= getColumnRightX() && BIRD_LEFT_MARGIN >= getColumnX();
-}
+float getHoleBottomY();
 
-bool isBirdInsideHole()
-{
-    bool top = getBirdY() > getHoleTopY();
-    bool bottom = getBirdBottomY() < getHoleBottomY();
-    return top && bottom;
-}
+float getBirdY();
 
-void rectFocusUp()
-{
-    menu_focus--;
-    if (menu_focus < 1)
-    {
-        menu_focus = 3;
-    }
-}
+float getColumnRightX();
 
-void rectFocusDown()
-{
-    menu_focus++;
-    if (menu_focus > 3)
-    {
-        menu_focus = 1;
-    }
-}
+float getBirdBottomY();
 
-void gameOverRectFocusUp()
-{
-    game_over_focus--;
-    if (game_over_focus < 1)
-    {
-        game_over_focus = 2;
-    }
-}
+void updateColumn(const float elapsed);
 
-void gameOverRectFocusDown()
-{
-    game_over_focus++;
-    if (game_over_focus > 2)
-    {
-        game_over_focus = 1;
-    }
-}
+bool isBirdOvercomeColumn();
 
-void birdUp()
-{
-    bird -= 0.1f;
-    birdLimit();
-}
+bool isBirdInsideHole();
 
-void birdDown()
-{
-    bird += 0.1f;
-    birdLimit();
-}
+void rectFocusUp();
 
-void birdFall(const float elapsed)
-{
-    if (!pause)
-    {
-        bird += 0.1f * elapsed;
-        birdLimit();
-    }
-}
+void rectFocusDown();
 
-void checkGameOver()
-{
-    if (isBirdOvercomeColumn() && !isBirdInsideHole())
-    {
-        gameOverPause();
-    }
-}
+void gameOverRectFocusUp();
 
-SDL_AppResult processGameOverMenu()
-{
-    if (game_over)
-    {
-        switch (game_over_focus)
-        {
-        case 1:
-            restart();
-            break;
-        case 2:
-            return SDL_APP_SUCCESS;
-            break;
-        default:
-            break;
-        }
-    }
-    return SDL_APP_CONTINUE;
-}
+void gameOverRectFocusDown();
 
-SDL_AppResult processMenu()
-{
-    if (pause)
-    {
-        switch (menu_focus)
-        {
-        case 1:
-            pause = false;
-            break;
-        case 2:
-            restart();
-            break;
-        case 3:
-            return SDL_APP_SUCCESS;
-            break;
-        default:
-            break;
-        }
-    }
-    return SDL_APP_CONTINUE;
-}
+void birdUp();
+
+void birdDown();
+
+void birdFall(const float elapsed);
+
+void checkGameOver();
+
+SDL_AppResult processGameOverMenu();
+
+SDL_AppResult processMenu();
+
+#endif
