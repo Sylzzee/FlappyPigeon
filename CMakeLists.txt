@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -13,8 +13,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 find_package(SDL3 REQUIRED)
 find_package(SDL3_image REQUIRED)
 
-add_executable(${PROJECT_NAME} WIN32 main.c render.c game_math.c)
+add_executable(${PROJECT_NAME} WIN32 main.c render.c game_math.c )
 add_executable(homework homework.c)
+add_subdirectory(game_math)
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE

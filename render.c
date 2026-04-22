@@ -88,6 +88,8 @@ SDL_AppResult Game_Init()
 
     SDL_DestroySurface(surface);
 
+    initState();
+
     return SDL_APP_CONTINUE;
 }
 
@@ -104,17 +106,17 @@ void drawBackground()
 void drawColumn()
 {
     SDL_FRect column1;
-    column1.x = getColumnX();
+    column1.x = GC_getColumnX();
     column1.y = 0;
     column1.w = COLUMN_WIDTH;
-    column1.h = getHoleTopY();
+    column1.h = GC_getHoleTopY();
     SDL_RenderTexture(renderer, column_texture, NULL, &column1);
 
     SDL_FRect column2;
-    column2.x = getColumnX();
-    column2.y = getHoleBottomY();
+    column2.x = GC_getColumnX();
+    column2.y = GC_getHoleBottomY();
     column2.w = COLUMN_WIDTH;
-    column2.h = WINDOW_HEIGHT - getHoleBottomY();
+    column2.h = WINDOW_HEIGHT - GC_getHoleBottomY();
     SDL_RenderTexture(renderer, column_texture, NULL, &column2);
 }
 
@@ -188,7 +190,7 @@ void drawScore()
     char drawscore[100];
     SDL_SetRenderDrawColor(renderer, 180, 0, 255, SDL_ALPHA_OPAQUE);
     SDL_SetRenderScale(renderer, 5.0f, 5.0f);
-    snprintf(drawscore, 100, "%d", getAddscore());
+    snprintf(drawscore, 100, "%d", GS_getAddscore());
     SDL_RenderDebugText(renderer, 60.6f, 2, drawscore);
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
@@ -229,9 +231,9 @@ void processColumn(const float elapsed)
 
 void drawMenu(const Uint64 now)
 {
-    if (isPauseTrue() && isGameOverTrue() == false)
+    if (GP_isPauseTrue() && GP_isGameOverTrue() == false)
     {
-        drawRectFocus(getMenuFocus());
+        drawRectFocus(GP_getMenuFocus());
         drawMenuRects();
         drawMenuText(now);
     }
@@ -239,9 +241,9 @@ void drawMenu(const Uint64 now)
 
 void drawGameOverMenu(const Uint64 now)
 {
-    if (isGameOverTrue())
+    if (GP_isGameOverTrue())
     {
-        drawGameOverRectFocus(getGameOverMenuFocus());
+        drawGameOverRectFocus(GP_getGameOverMenuFocus());
         drawGameOverMenuRects();
         drawGameOverMenuText(now);
     }
@@ -263,7 +265,7 @@ void gameRender()
 
     drawGameOverMenu(now);
 
-    if (isGameOverTrue() == false)
+    if (GP_isGameOverTrue() == false)
     {
         checkGameOver();
     }
@@ -272,7 +274,7 @@ void gameRender()
 
     last_time = now;
 
-    if (isPauseTrue() == false) {
+    if (GP_isPauseTrue() == false) {
         frame++;
     }
 

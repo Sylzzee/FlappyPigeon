@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 #include <SDL3/SDL_init.h>
+#include "game_math/game_pause.h"
+#include "game_math/game_score.h"
+#include "game_math/game_columnState.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -14,33 +17,13 @@
 #define BIRD_RIGHT_X (BIRD_LEFT_MARGIN + BIRD_WIDTH)
 #define PIXELS_PER_SECOND 60
 
-void switchPause();
-
-bool isPauseTrue();
-
-bool isGameOverTrue();
-
-int getMenuFocus();
-
-int getGameOverMenuFocus();
-
-int getAddscore();
+void initState();
 
 void restart();
 
-void gameOverPause();
-
 void birdLimit();
 
-float getColumnX();
-
-float getHoleTopY();
-
-float getHoleBottomY();
-
 float getBirdY();
-
-float getColumnRightX();
 
 float getBirdBottomY();
 
@@ -49,14 +32,6 @@ void updateColumn(const float elapsed);
 bool isBirdOvercomeColumn();
 
 bool isBirdInsideHole();
-
-void rectFocusUp();
-
-void rectFocusDown();
-
-void gameOverRectFocusUp();
-
-void gameOverRectFocusDown();
 
 void birdUp();
 

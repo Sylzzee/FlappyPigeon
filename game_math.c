@@ -1,62 +1,31 @@
 #include "game_math.h"
+#include "game_math/game_pause.h"
+#include "game_math/game_score.h"
+#include "game_math/game_columnState.h"
 
-static float column = 1;
 static float bird = 0.5;
-static float rect_hole = 0.5;
-static float column_speed = 0.18f;
-static bool flag = true;
-static bool pause = false;
-static bool game_over = false;
-static int menu_focus = 1;
-static int game_over_focus = 1;
-static int addscore = 0;
 
-void switchPause() {
-    pause = !pause;
-    menu_focus = 1;
-}
-
-bool isPauseTrue() {
-    return pause;
-}
-
-bool isGameOverTrue() {
-    return game_over;
-}
-
-int getMenuFocus() {
-    return menu_focus;
-}
-
-int getGameOverMenuFocus() {
-    return game_over_focus;
-}
-
-int getAddscore() {
-    return addscore;
+void initState()
+{
+    GC_initState();
+    GS_scoreFlagTrue();
+    GS_addscoreReset();
+    GP_gamePauseReset();
 }
 
 void restart()
 {
-    pause = false;
-    addscore = 0;
+    GP_gamePauseReset();
+    GS_addscoreReset();
     bird = 0.5;
-    column = 1;
-    game_over = false;
-}
-
-void gameOverPause()
-{
-    pause = true;
-    game_over = true;
-    game_over_focus = 1;
+    GC_initState();
 }
 
 void birdLimit()
 {
     if (bird > 1)
     {
-        gameOverPause();
+        GP_gameOverPause();
     }
     else if (bird < 0)
     {
@@ -64,29 +33,9 @@ void birdLimit()
     }
 }
 
-float getColumnX()
-{
-    return column * WINDOW_WIDTH;
-}
-
-float getHoleTopY()
-{
-    return rect_hole * WINDOW_HEIGHT;
-}
-
-float getHoleBottomY()
-{
-    return getHoleTopY() + HOLE_HEIGHT * 2;
-}
-
 float getBirdY()
 {
     return bird * WINDOW_HEIGHT;
-}
-
-float getColumnRightX()
-{
-    return getColumnX() + COLUMN_WIDTH;
 }
 
 float getBirdBottomY()
@@ -96,74 +45,38 @@ float getBirdBottomY()
 
 void updateColumn(const float elapsed)
 {
-    if (!isPauseTrue())
+    if (!GP_isPauseTrue())
     {
-        column -= column_speed * elapsed;
-        if (getColumnRightX() < BIRD_LEFT_MARGIN)
+        GC_moveColumn(elapsed);
+        if (GC_getColumnRightX() < BIRD_LEFT_MARGIN)
         {
-            if (flag == 1)
+            if (GS_isScoreFlagTrue())
             {
-                addscore++;
-                flag = 0;
+                GS_addScore();
+                GS_changeScoreFlag();
             }
         }
     }
 
-    if (column <= -COLUMN_WIDTH / WINDOW_WIDTH)
+    if (GC_getColumnState() <= -COLUMN_WIDTH / WINDOW_WIDTH)
     {
-        column = 1;
-        flag = 1;
-        rect_hole = SDL_randf() * ((float)(WINDOW_HEIGHT - HOLE_HEIGHT) / WINDOW_HEIGHT);
+        GC_columnStateReset();
+        GS_scoreFlagTrue();
+        GC_randRectHole();
     }
 }
 
 bool isBirdOvercomeColumn()
 {
-    return BIRD_RIGHT_X <= getColumnRightX() && BIRD_RIGHT_X >= getColumnX() ||
-           BIRD_LEFT_MARGIN <= getColumnRightX() && BIRD_LEFT_MARGIN >= getColumnX();
+    return BIRD_RIGHT_X <= GC_getColumnRightX() && BIRD_RIGHT_X >= GC_getColumnX() ||
+           BIRD_LEFT_MARGIN <= GC_getColumnRightX() && BIRD_LEFT_MARGIN >= GC_getColumnX();
 }
 
 bool isBirdInsideHole()
 {
-    bool top = getBirdY() > getHoleTopY();
-    bool bottom = getBirdBottomY() < getHoleBottomY();
+    bool top = getBirdY() > GC_getHoleTopY();
+    bool bottom = getBirdBottomY() < GC_getHoleBottomY();
     return top && bottom;
-}
-
-void rectFocusUp()
-{
-    menu_focus--;
-    if (menu_focus < 1)
-    {
-        menu_focus = 3;
-    }
-}
-
-void rectFocusDown()
-{
-    menu_focus++;
-    if (menu_focus > 3)
-    {
-        menu_focus = 1;
-    }
-}
-
-void gameOverRectFocusUp()
-{
-    game_over_focus--;
-    if (game_over_focus < 1)
-    {
-        game_over_focus = 2;
-    }
-}
-
-void gameOverRectFocusDown()
-{
-    game_over_focus++;
-    if (game_over_focus > 2)
-    {
-        game_over_focus = 1;
-    }
 }
 
 void birdUp()
@@ -180,7 +93,7 @@ void birdDown()
 
 void birdFall(const float elapsed)
 {
-    if (!isPauseTrue())
+    if (!GP_isPauseTrue())
     {
         bird += 0.1f * elapsed;
         birdLimit();
@@ -191,20 +104,23 @@ void checkGameOver()
 {
     if (isBirdOvercomeColumn() && !isBirdInsideHole())
     {
-        gameOverPause();
+        GP_gameOverPause();
     }
 }
 
-SDL_AppResult processGameOverMenu()
+SDL_AppResult processMenu()
 {
-    if (isGameOverTrue())
+    if (GP_isPauseTrue())
     {
-        switch (getGameOverMenuFocus())
+        switch (GP_getMenuFocus())
         {
         case 1:
-            restart();
+            GP_gamePauseReset();
             break;
         case 2:
+            restart();
+            break;
+        case 3:
             return SDL_APP_SUCCESS;
             break;
         default:
@@ -214,19 +130,16 @@ SDL_AppResult processGameOverMenu()
     return SDL_APP_CONTINUE;
 }
 
-SDL_AppResult processMenu()
+SDL_AppResult processGameOverMenu()
 {
-    if (isPauseTrue())
+    if (GP_isGameOverTrue())
     {
-        switch (menu_focus)
+        switch (GP_getGameOverMenuFocus())
         {
         case 1:
-            pause = false;
-            break;
-        case 2:
             restart();
             break;
-        case 3:
+        case 2:
             return SDL_APP_SUCCESS;
             break;
         default:

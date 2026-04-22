@@ -22,16 +22,16 @@ static SDL_AppResult handle_key_event_(SDL_Scancode key_code)
     switch (key_code)
     {
     case SDL_SCANCODE_ESCAPE:
-        switchPause();
+        GP_switchPause();
         break;
     case SDL_SCANCODE_Q:
         return SDL_APP_SUCCESS;
     case SDL_SCANCODE_SPACE:
-        if (isPauseTrue() && isGameOverTrue() == false)
+        if (GP_isPauseTrue() && GP_isGameOverTrue() == false)
         {
             return processMenu();
         }
-        else if (isGameOverTrue())
+        else if (GP_isGameOverTrue())
         {
             return processGameOverMenu();
         }
@@ -40,13 +40,13 @@ static SDL_AppResult handle_key_event_(SDL_Scancode key_code)
             return SDL_APP_CONTINUE;
         }
     case SDL_SCANCODE_UP:
-        if (isPauseTrue() && isGameOverTrue() == false)
+        if (GP_isPauseTrue() && GP_isGameOverTrue() == false)
         {
-            rectFocusUp();
+            GP_rectFocusUp();
         }
-        else if (isGameOverTrue())
+        else if (GP_isGameOverTrue())
         {
-            gameOverRectFocusUp();
+            GP_gameOverRectFocusUp();
         }
         else
         {
@@ -54,13 +54,13 @@ static SDL_AppResult handle_key_event_(SDL_Scancode key_code)
         }
         break;
     case SDL_SCANCODE_DOWN:
-        if (isPauseTrue() && isGameOverTrue() == false)
+        if (GP_isPauseTrue() && GP_isGameOverTrue() == false)
         {
-            rectFocusDown();
+            GP_rectFocusDown();
         }
-        else if (isGameOverTrue())
+        else if (GP_isGameOverTrue())
         {
-            gameOverRectFocusDown();
+            GP_gameOverRectFocusDown();
         }
         else
         {
