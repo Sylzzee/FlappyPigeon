@@ -5,6 +5,7 @@
 #include <SDL3/SDL_surface.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3/SDL_log.h>
+#include "game_math.h"
 
 #define MENURECT_LEFT_MARGIN 160
 #define MENURECT_WIDTH 320
@@ -17,7 +18,7 @@ void drawBackground();
 
 void drawColumn();
 
-void drawBird();
+void drawBird(const GameFrameData data);
 
 void drawRectFocus(int rect_focus);
 
@@ -27,20 +28,20 @@ void drawMenuRects();
 
 void drawGameOverMenuRects();
 
-void drawScore();
+void drawScore(const GameFrameData data);
 
-void drawMenuText(const Uint64 now);
+void drawMenuText();
 
-void drawGameOverMenuText(const Uint64 now);
+void drawGameOverMenuText();
 
-void processBird(const float elapsed);
+void processBird(const float elapsed, const GameFrameData data);
 
-void processColumn(const float elapsed);
+void processColumn(const float elapsed, const GameFrameData data);
 
-void drawMenu(const Uint64 now);
+void drawMenu(const GameFrameData data);
 
-void drawGameOverMenu(const Uint64 now);
+void drawGameOverMenu(const GameFrameData data);
 
-void gameRender();
+void gameRender(const GameFrameData data);
 
 #endif

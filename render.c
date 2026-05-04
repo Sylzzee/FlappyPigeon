@@ -1,5 +1,6 @@
 #include "render.h"
 #include <stdio.h>
+#include "game_math_priv.h"
 #include "game_math.h"
 
 static SDL_Window *window = NULL;
@@ -103,35 +104,19 @@ void drawBackground()
     SDL_RenderTexture(renderer, background_texture, NULL, &background);
 }
 
-void drawColumn()
+void drawColumn(const GameFrameData data)
 {
-    SDL_FRect column1;
-    column1.x = GC_getColumnX();
-    column1.y = 0;
-    column1.w = COLUMN_WIDTH;
-    column1.h = GC_getHoleTopY();
-    SDL_RenderTexture(renderer, column_texture, NULL, &column1);
-
-    SDL_FRect column2;
-    column2.x = GC_getColumnX();
-    column2.y = GC_getHoleBottomY();
-    column2.w = COLUMN_WIDTH;
-    column2.h = WINDOW_HEIGHT - GC_getHoleBottomY();
-    SDL_RenderTexture(renderer, column_texture, NULL, &column2);
+    SDL_RenderTexture(renderer, column_texture, NULL, &data.columnTop);
+    SDL_RenderTexture(renderer, column_texture, NULL, &data.columnBottom);
 }
 
-void drawBird()
+void drawBird(const GameFrameData data)
 {
-    SDL_FRect birdRect;
-    birdRect.x = BIRD_LEFT_MARGIN;
-    birdRect.y = getBirdY();
-    birdRect.w = BIRD_WIDTH;
-    birdRect.h = BIRD_HEIGHT;
     if ((frame % 2000) <= 1000) {
-        SDL_RenderTexture(renderer, bird_texture, NULL, &birdRect);
+        SDL_RenderTexture(renderer, bird_texture, NULL, &data.birdRect);
     }
     else if((frame % 2000) > 1000) {
-        SDL_RenderTexture(renderer, bird1_texture, NULL, &birdRect);
+        SDL_RenderTexture(renderer, bird1_texture, NULL, &data.birdRect);
     }
 }
 
@@ -185,17 +170,17 @@ void drawGameOverMenuRects()
     }
 }
 
-void drawScore()
+void drawScore(const GameFrameData data)
 {
     char drawscore[100];
     SDL_SetRenderDrawColor(renderer, 180, 0, 255, SDL_ALPHA_OPAQUE);
     SDL_SetRenderScale(renderer, 5.0f, 5.0f);
-    snprintf(drawscore, 100, "%d", GS_getAddscore());
+    snprintf(drawscore, 100, "%d", data.score);
     SDL_RenderDebugText(renderer, 60.6f, 2, drawscore);
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
 
-void drawMenuText(const Uint64 now)
+void drawMenuText()
 {
     SDL_SetRenderScale(renderer, 3.5f, 3.5f);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
@@ -205,7 +190,7 @@ void drawMenuText(const Uint64 now)
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
 
-void drawGameOverMenuText(const Uint64 now)
+void drawGameOverMenuText()
 {
     SDL_SetRenderScale(renderer, 6.0f, 6.0f);
     SDL_SetRenderDrawColor(renderer, 255, 0, 70, SDL_ALPHA_OPAQUE);
@@ -217,39 +202,39 @@ void drawGameOverMenuText(const Uint64 now)
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
 
-void processBird(const float elapsed)
+void processBird(const float elapsed, const GameFrameData data)
 {
     birdFall(elapsed);
-    drawBird();
+    drawBird(data);
 }
 
-void processColumn(const float elapsed)
+void processColumn(const float elapsed, const GameFrameData data)
 {
     updateColumn(elapsed);
-    drawColumn();
+    drawColumn(data);
 }
 
-void drawMenu(const Uint64 now)
+void drawMenu(const GameFrameData data)
 {
-    if (GP_isPauseTrue() && GP_isGameOverTrue() == false)
+    if (data.pause && data.game_over == false)
     {
-        drawRectFocus(GP_getMenuFocus());
+        drawRectFocus(data.pause_focus);
         drawMenuRects();
-        drawMenuText(now);
+        drawMenuText();
     }
 }
 
-void drawGameOverMenu(const Uint64 now)
+void drawGameOverMenu(const GameFrameData data)
 {
-    if (GP_isGameOverTrue())
+    if (data.game_over)
     {
-        drawGameOverRectFocus(GP_getGameOverMenuFocus());
+        drawGameOverRectFocus(data.game_over_focus);
         drawGameOverMenuRects();
-        drawGameOverMenuText(now);
+        drawGameOverMenuText();
     }
 }
 
-void gameRender()
+void gameRender(const GameFrameData data)
 {
     const Uint64 now = SDL_GetTicks();
 
@@ -257,24 +242,24 @@ void gameRender()
 
     drawBackground();
 
-    processBird(elapsed);
+    processBird(elapsed, data);
 
-    processColumn(elapsed);
+    processColumn(elapsed, data);
 
-    drawMenu(now);
+    drawMenu(data);
 
-    drawGameOverMenu(now);
+    drawGameOverMenu(data);
 
-    if (GP_isGameOverTrue() == false)
+    if (data.game_over == false)
     {
         checkGameOver();
     }
     
-    drawScore();
+    drawScore(data);
 
     last_time = now;
 
-    if (GP_isPauseTrue() == false) {
+    if (data.pause == false) {
         frame++;
     }
 

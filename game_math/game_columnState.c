@@ -8,9 +8,8 @@
 
 static struct ColumnState columnState;
 
-int GC_columnStateReset() {
+void GC_columnStateReset() {
     columnState.column = 1;
-    return columnState.column;
 }
 
 void GC_randRectHole() {
@@ -47,6 +46,6 @@ float GC_getColumnRightX()
 
 void GC_initState() {
     GC_columnStateReset();
-    columnState.rect_hole = 0.5;
-    columnState.column_speed = 0.18;
+    columnState.rect_hole = 0.5f;
+    columnState.column_speed = 0.18f;
 }

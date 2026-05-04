@@ -9,7 +9,7 @@ struct ColumnState {
     float column_speed;
 };
 
-int GC_columnStateReset();
+void GC_columnStateReset();
 
 void GC_randRectHole();
 

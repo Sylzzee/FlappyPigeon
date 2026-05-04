@@ -10,10 +10,14 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
+if (MSVC)
+    add_compile_options(/W4 /WX /permissive- /sdl)
+endif()
+
 find_package(SDL3 REQUIRED)
 find_package(SDL3_image REQUIRED)
 
-add_executable(${PROJECT_NAME} WIN32 main.c render.c game_math.c )
+add_executable(${PROJECT_NAME} WIN32 main.c render.c game_math_priv.c game_math.c)
 add_executable(homework homework.c)
 add_subdirectory(game_math)
 
