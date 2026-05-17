@@ -12,11 +12,11 @@
 #define MENURECT_HEIGHT 60
 #define TEXT_SIZE 20
 
-SDL_AppResult Game_Init();
+SDL_AppResult Game_Init(const GameFrameData data);
 
-void drawBackground();
+void drawBackground(const GameFrameData data);
 
-void drawColumn();
+void drawColumn(const GameFrameData data);
 
 void drawBird(const GameFrameData data);
 
@@ -34,9 +34,9 @@ void drawMenuText();
 
 void drawGameOverMenuText();
 
-void processBird(const float elapsed, const GameFrameData data);
+void processBird(const GameFrameData data);
 
-void processColumn(const float elapsed, const GameFrameData data);
+void processColumn(const GameFrameData data);
 
 void drawMenu(const GameFrameData data);
 

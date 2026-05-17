@@ -15,8 +15,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
-
-    return Game_Init();
+    
+    initState();
+    GameFrameData data = processMath();
+    return Game_Init(data);
 }
 
 static SDL_AppResult handle_key_event_(SDL_Scancode key_code)

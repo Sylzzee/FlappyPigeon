@@ -8,6 +8,7 @@ typedef struct GameFrameData_struct{
     SDL_FRect birdRect;
     SDL_FRect columnTop;
     SDL_FRect columnBottom;
+    SDL_Rect window_size;
     int pause_focus;
     int game_over_focus;
     bool pause;

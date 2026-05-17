@@ -1,6 +1,5 @@
 #include "render.h"
 #include <stdio.h>
-#include "game_math_priv.h"
 #include "game_math.h"
 
 static SDL_Window *window = NULL;
@@ -13,12 +12,11 @@ static SDL_Texture *background_texture = NULL;
 static SDL_Texture *bird_texture = NULL;
 static SDL_Texture *bird1_texture = NULL;
 static SDL_Texture *column_texture = NULL;
-static Uint64 last_time = 0;
 static int frame = 1;
 
-SDL_AppResult Game_Init()
+SDL_AppResult Game_Init(const GameFrameData data)
 {
-    if (!SDL_CreateWindowAndRenderer("examples/renderer/rectangles", WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer))
+    if (!SDL_CreateWindowAndRenderer("examples/renderer/rectangles", data.window_size.w, data.window_size.h, 0, &window, &renderer))
     {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -89,19 +87,17 @@ SDL_AppResult Game_Init()
 
     SDL_DestroySurface(surface);
 
-    initState();
-
     return SDL_APP_CONTINUE;
 }
 
-void drawBackground()
+void drawBackground(const GameFrameData data)
 {
-    SDL_FRect background;
-    background.x = 0;
-    background.y = 0;
-    background.w = WINDOW_WIDTH;
-    background.h = WINDOW_HEIGHT;
-    SDL_RenderTexture(renderer, background_texture, NULL, &background);
+    SDL_FRect window_size;
+    window_size.x = (float)data.window_size.x;
+    window_size.y = (float)data.window_size.y;
+    window_size.w = (float)data.window_size.w;
+    window_size.h = (float)data.window_size.h;
+    SDL_RenderTexture(renderer, background_texture, NULL, &window_size);
 }
 
 void drawColumn(const GameFrameData data)
@@ -202,15 +198,13 @@ void drawGameOverMenuText()
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
 
-void processBird(const float elapsed, const GameFrameData data)
+void processBird(const GameFrameData data)
 {
-    birdFall(elapsed);
     drawBird(data);
 }
 
-void processColumn(const float elapsed, const GameFrameData data)
+void processColumn(const GameFrameData data)
 {
-    updateColumn(elapsed);
     drawColumn(data);
 }
 
@@ -236,28 +230,17 @@ void drawGameOverMenu(const GameFrameData data)
 
 void gameRender(const GameFrameData data)
 {
-    const Uint64 now = SDL_GetTicks();
+    drawBackground(data);
 
-    const float elapsed = ((float)(now - last_time)) / 1000.0f;
+    processBird(data);
 
-    drawBackground();
-
-    processBird(elapsed, data);
-
-    processColumn(elapsed, data);
+    processColumn(data);
 
     drawMenu(data);
 
     drawGameOverMenu(data);
-
-    if (data.game_over == false)
-    {
-        checkGameOver();
-    }
     
     drawScore(data);
-
-    last_time = now;
 
     if (data.pause == false) {
         frame++;
