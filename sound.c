@@ -7,7 +7,7 @@ GameSoundData GameSound_Init()
 
     data_sound.stream = NULL;
     data_sound.wav_data = NULL;
-    data_sound.ProgramState = SDL_APP_FAILURE;
+    data_sound.ProgramState = SDL_APP_FAILURE;  //подумати ще над дата_саунд та повертанням сдл штук
 
 
 
@@ -40,7 +40,7 @@ GameSoundData GameSound_Init()
     SDL_FlushAudioStream(stream); //конвертація wav у ТИП який може прочитати система хз
     SDL_ResumeAudioStreamDevice(stream); //анпаузить наше аудіо
     
-    return data_sound;
+    return data_sound;              
 }
 
 void DestroyWAV(SDL_AudioStream *stream, Uint8 *wav_data) 
