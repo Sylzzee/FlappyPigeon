@@ -4,19 +4,23 @@
 #include "render.h"
 #include "game_math_priv.h"
 #include "game_math.h"
+#include "sound.h"
+
+static GameSoundData data_sound;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     appstate; argc; argv;
     SDL_SetAppMetadata("Example Renderer Rectangles", "1.0", "com.example.renderer-rectangles");
 
-    if (!SDL_Init(SDL_INIT_VIDEO))
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
     {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
-    
+
     initState();
+    data_sound = GameSound_Init();
     GameFrameData data = processMath();
     return Game_Init(data);
 }
@@ -102,4 +106,5 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
     result; appstate;
+    DestroyWAV(stream, wav_data);
 }

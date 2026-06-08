@@ -17,7 +17,7 @@ endif()
 find_package(SDL3 REQUIRED)
 find_package(SDL3_image REQUIRED)
 
-add_executable(${PROJECT_NAME} WIN32 main.c render.c game_math_priv.c game_math.c)
+add_executable(${PROJECT_NAME} WIN32 main.c render.c game_math_priv.c game_math.c sound.c)
 add_executable(homework homework.c)
 add_subdirectory(game_math)
 
