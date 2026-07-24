@@ -95,16 +95,26 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
     return SDL_APP_CONTINUE;
 }
 
+int sound = 0;
+
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
     appstate;
     GameFrameData data = processMath();
     gameRender(data);
+    if(sound == 2000) {
+        FlappingSound();
+        sound = 0;
+    }
+    else 
+    {
+        sound++;
+    }
     return SDL_APP_CONTINUE;
 }
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
     result; appstate;
-    DestroyWAV(stream, wav_data);
+    DestroyWAV(data_sound.stream, data_sound.wav_data);
 }

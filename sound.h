@@ -3,8 +3,6 @@
 
 #include <SDL3/SDL.h>
 
-void DestroyWAV(SDL_AudioStream *stream, Uint8 *wav_data);
-
 typedef struct GameSoundData_struct
 {
     SDL_AudioStream *stream; 
@@ -13,6 +11,10 @@ typedef struct GameSoundData_struct
 } GameSoundData;
 
 GameSoundData GameSound_Init();
+
+void DestroyWAV(SDL_AudioStream *stream, Uint8 *wav_data);
+
+void FlappingSound();
 
 //GameSoundData processSound();
 

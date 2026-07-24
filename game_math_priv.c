@@ -104,7 +104,9 @@ void checkGameOver()
 {
     if (isBirdOvercomeColumn() && !isBirdInsideHole())
     {
+        if (!GP_isGameOverTrue()) {
         GP_gameOverPause();
+        }
     }
 }
 
