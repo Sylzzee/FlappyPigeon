@@ -28,3 +28,24 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE SDL_MAIN_USE_CALLBACKS)
+
+set(FLAPPY_PIGEON_ASSETS
+    "background.bmp"
+    "Bird.bmp"
+    "Bird.png"
+    "Bird1.png"
+    "column.bmp"
+    "column.png"
+    "1-02 - Moon in One's Cup.wav"
+    "dragon-studio-dragon-flapping-wings-364476_WIbR3fWD.wav"
+    "SDL3.dll"
+    "SDL3_image.dll"
+)
+
+foreach(asset IN LISTS FLAPPY_PIGEON_ASSETS)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/${asset}"
+            "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${asset}"
+    )
+endforeach()

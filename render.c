@@ -121,7 +121,7 @@ void drawRectFocus(int rect_focus)
     SDL_SetRenderDrawColor(renderer, 255, 60, 60, SDL_ALPHA_OPAQUE);
     SDL_FRect menuRectChooseUp;
     menuRectChooseUp.x = MENURECT_LEFT_MARGIN - 5;
-    menuRectChooseUp.y = 90.0f * rect_focus - 5;
+    menuRectChooseUp.y = 90.0f * rect_focus - 5; //саме 90 бо так норм виглядає (все вже під нього підстроєно)
     menuRectChooseUp.w = MENURECT_WIDTH + 10;
     menuRectChooseUp.h = MENURECT_HEIGHT + 10;
     SDL_RenderFillRect(renderer, &menuRectChooseUp);
@@ -132,7 +132,7 @@ void drawGameOverRectFocus(int game_over_rect_focus)
     SDL_SetRenderDrawColor(renderer, 255, 60, 60, SDL_ALPHA_OPAQUE);
     SDL_FRect menuRectChoose;
     menuRectChoose.x = MENURECT_LEFT_MARGIN - 5;
-    menuRectChoose.y = 90.0f * (game_over_rect_focus + 1) - 5;
+    menuRectChoose.y = 90.0f * (game_over_rect_focus + 1) - 5; //саме 90 бо так норм виглядає (все вже під нього підстроєно)
     menuRectChoose.w = MENURECT_WIDTH + 10;
     menuRectChoose.h = MENURECT_HEIGHT + 10;
     SDL_RenderFillRect(renderer, &menuRectChoose);
@@ -145,7 +145,7 @@ void drawMenuRects()
     for (int i = 0; i < 3; i++)
     {
         menuRect.x = MENURECT_LEFT_MARGIN;
-        menuRect.y = 90.0f + 90 * i;
+        menuRect.y = 90.0f + 90 * i; //саме 90 бо так норм виглядає (все вже під нього підстроєно)
         menuRect.w = MENURECT_WIDTH;
         menuRect.h = MENURECT_HEIGHT;
         SDL_RenderFillRect(renderer, &menuRect);
@@ -159,7 +159,7 @@ void drawGameOverMenuRects()
     for (int i = 1; i < 3; i++)
     {
         menuRect.x = MENURECT_LEFT_MARGIN;
-        menuRect.y = 90.0f + 90 * i;
+        menuRect.y = 90.0f + 90 * i; //саме 90 бо так норм виглядає (все вже під нього підстроєно)
         menuRect.w = MENURECT_WIDTH;
         menuRect.h = MENURECT_HEIGHT;
         SDL_RenderFillRect(renderer, &menuRect);

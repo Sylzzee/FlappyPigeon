@@ -7,9 +7,8 @@ int GS_getAddscore()
     return score.addscore;
 }
 
-int GS_addscoreReset() {
+void GS_addscoreReset() {
     score.addscore = 0;
-    return score.addscore;
 }
 
 bool GS_scoreFlagTrue() {

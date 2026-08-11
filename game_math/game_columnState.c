@@ -3,7 +3,7 @@
 
 #define WINDOW_HEIGHT 480
 #define WINDOW_WIDTH 640
-#define HOLE_HEIGHT 60
+#define HOLE_HEIGHT 120
 #define COLUMN_WIDTH 60
 
 static struct ColumnState columnState;
@@ -26,7 +26,8 @@ float GC_getHoleTopY()
     return columnState.rect_hole * WINDOW_HEIGHT;
 }
 
-float GC_getColumnState() {
+float GC_getColumnState() 
+{
     return columnState.column;
 }
 
@@ -36,7 +37,7 @@ void GC_moveColumn(const float elapsed) {
 
 float GC_getHoleBottomY()
 {
-    return GC_getHoleTopY() + HOLE_HEIGHT * 2;
+    return GC_getHoleTopY() + HOLE_HEIGHT;
 }
 
 float GC_getColumnRightX()

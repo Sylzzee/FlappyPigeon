@@ -10,7 +10,7 @@ struct Score {
 
 int GS_getAddscore();
 
-int GS_addscoreReset();
+void GS_addscoreReset();
 
 bool GS_scoreFlagTrue();
 
