@@ -23,6 +23,10 @@ SDL_AppResult Game_Init(const GameFrameData data)
     }
     SDL_Surface *surface = NULL;
 
+    SDL_Surface *icon_surface = SDL_LoadBMP("Pixel pigeon.bmp");
+    SDL_SetWindowIcon(window, icon_surface);
+    SDL_DestroySurface(icon_surface);
+    
     surface = SDL_LoadBMP(background_path);
     if (!surface)
     {

@@ -36,6 +36,7 @@ set(FLAPPY_PIGEON_ASSETS
     "Bird1.png"
     "column.bmp"
     "column.png"
+    "Pixel pigeon.bmp"
     "1-02 - Moon in One's Cup.wav"
     "dragon-studio-dragon-flapping-wings-364476_WIbR3fWD.wav"
     "SDL3.dll"
