@@ -34,6 +34,8 @@ void drawMenuText();
 
 void drawGameOverMenuText();
 
+void drawTapToStartText();
+
 void processBird(const GameFrameData data);
 
 void processColumn(const GameFrameData data);

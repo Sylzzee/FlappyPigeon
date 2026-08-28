@@ -13,6 +13,7 @@ typedef struct GameFrameData_struct{
     int game_over_focus;
     bool pause;
     bool game_over;
+    bool tap_to_start;
 } GameFrameData;
 
 GameFrameData processMath();

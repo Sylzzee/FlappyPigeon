@@ -202,6 +202,15 @@ void drawGameOverMenuText()
     SDL_SetRenderScale(renderer, 1.0f, 1.0f);
 }
 
+void drawTapToStartText()
+{
+    SDL_SetRenderScale(renderer, 5.0f, 5.0f);
+    SDL_SetRenderDrawColor(renderer, 180, 0, 255, SDL_ALPHA_OPAQUE);
+    SDL_RenderDebugText(renderer, 24, 39, "Tap [Space]");
+    SDL_RenderDebugText(renderer, 35, 53, "to Start");
+    SDL_SetRenderScale(renderer, 1.0f, 1.0f);
+}
+
 void processBird(const GameFrameData data)
 {
     drawBird(data);
@@ -214,7 +223,7 @@ void processColumn(const GameFrameData data)
 
 void drawMenu(const GameFrameData data)
 {
-    if (data.pause && data.game_over == false)
+    if (data.pause && data.game_over == false && data.tap_to_start == false)
     {
         drawRectFocus(data.pause_focus);
         drawMenuRects();
@@ -239,6 +248,10 @@ void gameRender(const GameFrameData data)
     processBird(data);
 
     processColumn(data);
+
+    if (data.tap_to_start) {
+        drawTapToStartText();
+    }
 
     drawMenu(data);
 

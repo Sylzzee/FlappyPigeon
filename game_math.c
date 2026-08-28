@@ -50,6 +50,7 @@ GameFrameData processMath() {
     checkGameOver();
     data.game_over = GP_isGameOverTrue();
     data.game_over_focus = GP_getGameOverMenuFocus();
+    data.tap_to_start = GP_isTapToStartTrue();
 
     last_time = now;
 

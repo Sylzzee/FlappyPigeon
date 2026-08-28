@@ -10,7 +10,7 @@ void initState()
     GC_initState();
     GS_scoreFlagTrue();
     GS_addscoreReset();
-    GP_gamePauseReset();
+    GP_showTapToStart();
 }
 
 void restart()
